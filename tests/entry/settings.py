@@ -9,7 +9,7 @@ UNFAZED_SETTINGS = {
 }
 
 
-PROMETHEUS_SETTINGS = {
+UNFAZED_PROMETHEUS_SETTINGS = {
     "HOSTNAME": socket.gethostname(),
     "PROJECT": "unfazed_prometheus",
     "CLIENT_CLASS": "unfazed_prometheus.settings.PrometheusSettings",

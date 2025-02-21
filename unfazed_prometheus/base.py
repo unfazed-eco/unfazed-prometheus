@@ -19,7 +19,7 @@ from .utils import get_function_name
 
 class Agent:
     def __init__(self):
-        self.settings: PrometheusSettings = settings["PROMETHEUS_SETTINGS"]
+        self.settings: PrometheusSettings = settings["UNFAZED_PROMETHEUS_SETTINGS"]
         self._ready = False
 
     def setup(self):
