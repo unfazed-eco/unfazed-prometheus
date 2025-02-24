@@ -27,4 +27,6 @@ async def unfazed() -> t.AsyncGenerator[None, None]:
     unfazed = Unfazed()
     await unfazed.setup()
 
+    print(f"unfazed.middleware: {unfazed.user_middleware}")
+
     yield unfazed

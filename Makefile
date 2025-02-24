@@ -14,3 +14,8 @@ publish:
 	@echo "Publishing package..."
 	uv build
 	uv publish
+
+
+client:
+	@echo "Running prometheus client..."
+	uv run uvicorn scripts.prometheus_client:app --reload --port 9527 --host 0.0.0.0

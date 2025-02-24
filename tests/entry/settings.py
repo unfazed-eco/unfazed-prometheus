@@ -1,8 +1,8 @@
 import socket
 
 UNFAZED_SETTINGS = {
-    "MIDDLEWARES": [
-        "unfazed_prometheus.middleware.common.PrometheusMiddleware",
+    "MIDDLEWARE": [
+        "unfazed_prometheus.middleware.common.PrometheusHttpRequestMiddleware",
     ],
     "LIFESPAN": ["unfazed_prometheus.lifespan.PrometheusLifespan"],
     "ROOT_URLCONF": "entry.routes",
