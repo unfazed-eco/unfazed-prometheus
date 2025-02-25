@@ -18,7 +18,7 @@ def pytest_collection_modifyitems(items: t.List[Item]) -> None:
 
 # create a global unfazed
 # use this fixture in your test functions
-@pytest.fixture(autouse=True)
+@pytest.fixture(autouse=True, scope="session")
 async def unfazed() -> t.AsyncGenerator[None, None]:
     root_path = os.path.dirname(os.path.abspath(__file__))
     sys.path.append(root_path)
@@ -26,7 +26,5 @@ async def unfazed() -> t.AsyncGenerator[None, None]:
 
     unfazed = Unfazed()
     await unfazed.setup()
-
-    print(f"unfazed.middleware: {unfazed.user_middleware}")
 
     yield unfazed

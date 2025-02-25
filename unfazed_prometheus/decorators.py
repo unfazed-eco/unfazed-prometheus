@@ -11,7 +11,7 @@ Labels = t.List[Label]
 def meta_monitor(
     counter_handler: t.Optional[Counter] = None,
     hist_handler: t.Optional[Histogram] = None,
-    exc_handler: t.Optional[t.Callable] = None,
+    exc_handler: t.Optional[Counter] = None,
     counter_labels: t.Optional[Labels] = None,
     hist_labels: t.Optional[Labels] = None,
     exc_labels: t.Optional[Labels] = None,
@@ -61,39 +61,47 @@ def meta_monitor(
         else:
             exc_handler_target = None
 
-        @wraps(func)
-        async def wrapper(*args, **kwargs) -> t.Any:
+        def counter_inc():
             if counter_handler_target:
                 counter_handler_target.inc()
 
+        def exc_inc():
+            if exc_handler_target:
+                exc_handler_target.inc()
+
+        @wraps(func)
+        async def wrapper(*args, **kwargs) -> t.Any:
+            counter_inc()
+
+            async def _wrapper():
+                try:
+                    return await func(*args, **kwargs)
+                except Exception as err:
+                    exc_inc()
+                    raise err
+
             if hist_handler_target:
                 with hist_handler_target.time():
-                    try:
-                        return await func(*args, **kwargs)
-                    except Exception as err:
-                        if exc_handler_target:
-                            exc_handler_target.inc()
-
-                        raise err
+                    return await _wrapper()
             else:
-                return await func(*args, **kwargs)
+                return await _wrapper()
 
         @wraps(func)
         def sync_wrapper(*args, **kwargs) -> t.Any:
-            if counter_handler_target:
-                counter_handler_target.inc()
+            counter_inc()
+
+            def _wrapper():
+                try:
+                    return func(*args, **kwargs)
+                except Exception as err:
+                    exc_inc()
+                    raise err
 
             if hist_handler_target:
                 with hist_handler_target.time():
-                    try:
-                        return func(*args, **kwargs)
-                    except Exception as err:
-                        if exc_handler_target:
-                            exc_handler_target.inc()
-
-                        raise err
+                    return _wrapper()
             else:
-                return func(*args, **kwargs)
+                return _wrapper()
 
         return wrapper if asyncio.iscoroutinefunction(func) else sync_wrapper
 

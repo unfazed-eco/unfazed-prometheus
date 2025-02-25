@@ -19,11 +19,14 @@ from .utils import get_function_name
 
 
 class Agent:
+    settings: PrometheusSettings
+
     def __init__(self):
-        self.settings: PrometheusSettings = settings["UNFAZED_PROMETHEUS_SETTINGS"]
         self._ready = False
 
     def setup(self):
+        self.settings = settings["UNFAZED_PROMETHEUS_SETTINGS"]
+
         # check prometheus multiproc dir settings
         if self.settings.prometheus_multiproc_dir:
             path = self.settings.prometheus_multiproc_dir
