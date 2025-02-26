@@ -9,6 +9,6 @@ class PrometheusSettings(BaseModel):
 
     project: str = Field(alias="PROJECT")
     hostname: str = Field(alias="HOSTNAME")
-    prometheus_multiproc_dir: str = Field(
+    prometheus_multiproc_dir: str | None = Field(
         default=None, alias="PROMETHEUS_MULTIPROC_DIR"
     )

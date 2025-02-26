@@ -38,24 +38,28 @@ def meta_monitor(
 
     def decorator(func: t.Callable) -> t.Callable:
         if counter_handler:
+            new_counter_labels = counter_labels or []
             counter_str_labels = [
-                label(func) if callable(label) else label for label in counter_labels
+                label(func) if callable(label) else label
+                for label in new_counter_labels
             ]
             counter_handler_target = counter_handler.labels(*counter_str_labels)
         else:
             counter_handler_target = None
 
         if hist_handler:
+            new_hist_labels = hist_labels or []
             hist_str_labels = [
-                label(func) if callable(label) else label for label in hist_labels
+                label(func) if callable(label) else label for label in new_hist_labels
             ]
             hist_handler_target = hist_handler.labels(*hist_str_labels)
         else:
             hist_handler_target = None
 
         if exc_handler:
+            new_exc_labels = exc_labels or []
             exc_str_labels = [
-                label(func) if callable(label) else label for label in exc_labels
+                label(func) if callable(label) else label for label in new_exc_labels
             ]
             exc_handler_target = exc_handler.labels(*exc_str_labels)
         else:
@@ -70,7 +74,7 @@ def meta_monitor(
                 exc_handler_target.inc()
 
         @wraps(func)
-        async def wrapper(*args, **kwargs) -> t.Any:
+        async def wrapper(*args: t.Any, **kwargs: t.Any) -> t.Any:
             counter_inc()
 
             async def _wrapper():
@@ -87,7 +91,7 @@ def meta_monitor(
                 return await _wrapper()
 
         @wraps(func)
-        def sync_wrapper(*args, **kwargs) -> t.Any:
+        def sync_wrapper(*args: t.Any, **kwargs: t.Any) -> t.Any:
             counter_inc()
 
             def _wrapper():

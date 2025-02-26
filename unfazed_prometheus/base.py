@@ -1,5 +1,4 @@
 import os
-import warnings
 
 from starlette.types import Scope
 from unfazed.conf import settings
@@ -25,25 +24,17 @@ class Agent:
         self._ready = False
 
     def setup(self):
-        self.settings = settings["UNFAZED_PROMETHEUS_SETTINGS"]
+        self.settings: PrometheusSettings = settings["UNFAZED_PROMETHEUS_SETTINGS"]
 
         # check prometheus multiproc dir settings
         if self.settings.prometheus_multiproc_dir:
-            path = self.settings.prometheus_multiproc_dir
-
-        else:
-            path = os.getenv("prometheus_multiproc_dir") or os.getenv(
-                "PROMETHEUS_MULTIPROC_DIR"
-            )
-
-        if not path:
-            warnings.warn("prometheus_multiproc_dir not set, metrics may be incorrect")
-
-        if not os.path.exists(path):
-            warnings.warn(f"prometheus_multiproc_dir {path} not found")
-
-        if path:
-            os.environ["PROMETHEUS_MULTIPROC_DIR"] = path
+            if (
+                "PROMETHEUS_MULTIPROC_DIR" not in os.environ
+                or "prometheus_multiproc_dir" not in os.environ
+            ):
+                os.environ["PROMETHEUS_MULTIPROC_DIR"] = (
+                    self.settings.prometheus_multiproc_dir
+                )
 
         self._ready = True
 

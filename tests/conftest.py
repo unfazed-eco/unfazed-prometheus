@@ -20,6 +20,12 @@ def pytest_collection_modifyitems(items: t.List[Item]) -> None:
 # use this fixture in your test functions
 @pytest.fixture(autouse=True, scope="session")
 async def unfazed() -> t.AsyncGenerator[None, None]:
+    if "PROMETHEUS_MULTIPROC_DIR" in os.environ:
+        del os.environ["PROMETHEUS_MULTIPROC_DIR"]
+
+    if "prometheus_multiproc_dir" in os.environ:
+        del os.environ["prometheus_multiproc_dir"]
+
     root_path = os.path.dirname(os.path.abspath(__file__))
     sys.path.append(root_path)
     os.environ.setdefault("UNFAZED_SETTINGS_MODULE", "entry.settings")
@@ -28,3 +34,5 @@ async def unfazed() -> t.AsyncGenerator[None, None]:
     await unfazed.setup()
 
     yield unfazed
+
+    os.environ["PROMETHEUS_MULTIPROC_DIR"] = "/prometheus"
