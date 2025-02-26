@@ -7,6 +7,8 @@ from .decorators import meta_monitor
 from .metrics import (
     ApiCallCounter,
     ApiCallDurationHistogram,
+    DatabaseCounter,
+    DatabaseDurationHistogram,
     ExceptionCounter,
     FunctionCounter,
     FunctionDurationHistogram,
@@ -92,6 +94,26 @@ class Agent:
                 scope["method"],
                 scope["path"],
             ],
+        )
+
+    @property
+    def monitor_database(self):
+        self.check_ready()
+        return meta_monitor(
+            counter_handler=DatabaseCounter,
+            hist_handler=DatabaseDurationHistogram,
+            exc_handler=ExceptionCounter,
+            counter_labels=[
+                self.settings.project,
+                self.settings.hostname,
+                get_function_name,
+            ],
+            hist_labels=[
+                self.settings.project,
+                self.settings.hostname,
+                get_function_name,
+            ],
+            exc_labels=[self.settings.project, self.settings.hostname, "database"],
         )
 
 
