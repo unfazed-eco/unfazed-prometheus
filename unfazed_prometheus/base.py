@@ -7,6 +7,8 @@ from .decorators import meta_monitor
 from .metrics import (
     ApiCallCounter,
     ApiCallDurationHistogram,
+    CacheCounter,
+    CacheDurationHistogram,
     DatabaseCounter,
     DatabaseDurationHistogram,
     ExceptionCounter,
@@ -16,7 +18,7 @@ from .metrics import (
     RequestDurationHistogram,
 )
 from .settings import PrometheusSettings
-from .utils import get_function_name
+from .utils import get_first_arg_first_letter, get_first_arg_name, get_function_name
 
 
 class Agent:
@@ -25,9 +27,11 @@ class Agent:
     def __init__(self):
         self._ready = False
 
-    def setup(self):
-        self.settings: PrometheusSettings = settings["UNFAZED_PROMETHEUS_SETTINGS"]
+    @property
+    def settings(self) -> PrometheusSettings:
+        return settings["UNFAZED_PROMETHEUS_SETTINGS"]
 
+    def setup(self):
         # check prometheus multiproc dir settings
         if self.settings.prometheus_multiproc_dir:
             if (
@@ -42,13 +46,12 @@ class Agent:
 
     def check_ready(self):
         if not self._ready:
-            raise RuntimeError(
-                "Unfazed Prometheus is not ready, set `unfazed_prometheus.lifespan.PrometheusLifespan` in your lifespan settings."
-            )
+            self.setup()
 
     @property
     def monitor_function(self):
         self.check_ready()
+
         return meta_monitor(
             counter_handler=FunctionCounter,
             hist_handler=FunctionDurationHistogram,
@@ -68,6 +71,7 @@ class Agent:
 
     def monitor_api(self, endpoint: str, category: str = "api"):
         self.check_ready()
+
         return meta_monitor(
             counter_handler=ApiCallCounter,
             hist_handler=ApiCallDurationHistogram,
@@ -79,6 +83,7 @@ class Agent:
 
     def monitor_request(self, scope: Scope):
         self.check_ready()
+
         return meta_monitor(
             counter_handler=RequestCounter,
             hist_handler=RequestDurationHistogram,
@@ -99,6 +104,7 @@ class Agent:
     @property
     def monitor_database(self):
         self.check_ready()
+
         return meta_monitor(
             counter_handler=DatabaseCounter,
             hist_handler=DatabaseDurationHistogram,
@@ -106,14 +112,35 @@ class Agent:
             counter_labels=[
                 self.settings.project,
                 self.settings.hostname,
-                get_function_name,
+                get_first_arg_first_letter,
             ],
             hist_labels=[
                 self.settings.project,
                 self.settings.hostname,
-                get_function_name,
+                get_first_arg_first_letter,
             ],
             exc_labels=[self.settings.project, self.settings.hostname, "database"],
+        )
+
+    @property
+    def monitor_cache(self):
+        self.check_ready()
+
+        return meta_monitor(
+            counter_handler=CacheCounter,
+            hist_handler=CacheDurationHistogram,
+            exc_handler=ExceptionCounter,
+            counter_labels=[
+                self.settings.project,
+                self.settings.hostname,
+                get_first_arg_name,
+            ],
+            hist_labels=[
+                self.settings.project,
+                self.settings.hostname,
+                get_first_arg_name,
+            ],
+            exc_labels=[self.settings.project, self.settings.hostname, "cache"],
         )
 
 

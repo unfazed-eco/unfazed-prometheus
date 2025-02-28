@@ -6,7 +6,6 @@ from unfazed.core import Unfazed
 from unfazed.test import Requestfactory
 
 from unfazed_prometheus import agent
-from unfazed_prometheus.base import Agent
 
 
 @pytest.fixture(scope="session")
@@ -24,6 +23,18 @@ def setup_db_state() -> t.Generator[None, None, None]:
             os.remove(os.path.join("/prometheus", file))
 
 
+async def assert_db_files_exist() -> None:
+    assert len(os.listdir("/prometheus")) > 0
+    flag = False
+    for file in os.listdir("/prometheus"):
+        if file.endswith(".db"):
+            flag = True
+            # check file size is not 0
+            assert os.path.getsize(os.path.join("/prometheus", file)) > 0
+
+    assert flag, "no db files found"
+
+
 async def test_requests(
     unfazed: Unfazed,
     setup_db_state: t.Generator[None, None, None],
@@ -36,12 +47,7 @@ async def test_requests(
             resp = await rf.get("/api/hello2")
             assert resp.status_code == 200
 
-    # check there files with suffix .db in /prometheus
-    assert len(os.listdir("/prometheus")) > 0
-    for file in os.listdir("/prometheus"):
-        if file.endswith(".db"):
-            # check file size is not 0
-            assert os.path.getsize(os.path.join("/prometheus", file)) > 0
+    await assert_db_files_exist()
 
 
 async def test_api_call(
@@ -62,12 +68,7 @@ async def test_api_call(
         resp = await hello2()
         assert resp == "hello2"
 
-    # check there files with suffix .db in /prometheus
-    assert len(os.listdir("/prometheus")) > 0
-    for file in os.listdir("/prometheus"):
-        if file.endswith(".db"):
-            # check file size is not 0
-            assert os.path.getsize(os.path.join("/prometheus", file)) > 0
+    await assert_db_files_exist()
 
 
 async def test_function_call(
@@ -107,17 +108,32 @@ async def test_function_call(
         func3()
         func4()
 
-    # check there files with suffix .db in /prometheus
-    assert len(os.listdir("/prometheus")) > 0
-    for file in os.listdir("/prometheus"):
-        if file.endswith(".db"):
-            # check file size is not 0
-            assert os.path.getsize(os.path.join("/prometheus", file)) > 0
+    await assert_db_files_exist()
 
 
-async def test_base_agent() -> None:
-    agent2 = Agent()
+async def test_db(
+    unfazed: Unfazed,
+    setup_db_state: t.Generator[None, None, None],
+) -> None:
+    async with Requestfactory(unfazed) as rf:
+        resp = await rf.get("/api/app/user-list")
+        assert resp.status_code == 200
 
-    with pytest.raises(RuntimeError):
-        agent2 = Agent()
-        agent2.check_ready()
+        resp = await rf.get("/api/app/user-create")
+        assert resp.status_code == 200
+
+    await assert_db_files_exist()
+
+
+async def test_cache(
+    unfazed: Unfazed,
+    setup_db_state: t.Generator[None, None, None],
+) -> None:
+    async with Requestfactory(unfazed) as rf:
+        resp = await rf.get("/api/app/cache-get")
+        assert resp.status_code == 200
+
+        resp = await rf.get("/api/app/cache-set")
+        assert resp.status_code == 200
+
+    await assert_db_files_exist()

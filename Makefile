@@ -19,3 +19,7 @@ publish:
 client:
 	@echo "Running prometheus client..."
 	uv run uvicorn scripts.prometheus_client:app --reload --port 9527 --host 0.0.0.0
+
+setup-env:
+	uv run python tests/prj/manage.py init-db
+	uv run python tests/prj/manage.py migrate

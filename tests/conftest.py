@@ -26,7 +26,7 @@ async def unfazed() -> t.AsyncGenerator[None, None]:
     if "prometheus_multiproc_dir" in os.environ:
         del os.environ["prometheus_multiproc_dir"]
 
-    root_path = os.path.dirname(os.path.abspath(__file__))
+    root_path = os.path.join(os.path.dirname(__file__), "prj")
     sys.path.append(root_path)
     os.environ.setdefault("UNFAZED_SETTINGS_MODULE", "entry.settings")
 

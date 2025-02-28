@@ -1,3 +1,5 @@
+import typing as t
+
 from tortoise.backends.mysql import MySQLClient
 
 from unfazed_prometheus import agent
@@ -9,10 +11,13 @@ class PrometheusMySQLClient(MySQLClient):
         return await super().execute_insert(query, values)
 
     @agent.monitor_database
-    async def execute_query(self, query: str, values: list) -> int:
+    async def execute_query(
+        self, query: str, values: t.Optional[list] = None
+    ) -> tuple[int, list[dict]]:
         return await super().execute_query(query, values)
 
     @agent.monitor_database
-    async def execute_query_dict(self, query: str, values: list) -> int:
+    async def execute_query_dict(
+        self, query: str, values: t.Optional[list] = None
+    ) -> list[dict]:
         return await super().execute_query_dict(query, values)
-
