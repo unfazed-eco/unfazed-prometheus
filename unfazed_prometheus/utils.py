@@ -6,7 +6,7 @@ def get_function_name(func: t.Callable, *args: t.Any, **kwargs: t.Any) -> str:
 
 
 def get_first_arg_name(func: t.Callable, *args: t.Any, **kwargs: t.Any) -> str:
-    return args[0]
+    return args[1]
 
 
 def get_first_arg_first_letter(func: t.Callable, *args: t.Any, **kwargs: t.Any) -> str:

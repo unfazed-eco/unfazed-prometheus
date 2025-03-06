@@ -13,7 +13,7 @@ class PrometheusHttpRequestMiddleware:
             return await self.app(scope, receive, send)
 
         @self.agent.monitor_request(scope)
-        async def call_wrapper():
+        async def call_wrapper() -> None:
             await self.app(scope, receive, send)
 
         await call_wrapper()

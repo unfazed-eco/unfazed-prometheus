@@ -7,6 +7,8 @@ from prometheus_client import Counter, Histogram
 Label = t.Union[str, t.Callable[[t.Callable], str]]
 Labels = t.List[Label]
 
+Decorator = t.Callable[[t.Callable], t.Callable]
+
 
 def meta_monitor(
     counter_handler: t.Optional[Counter] = None,
@@ -15,7 +17,7 @@ def meta_monitor(
     counter_labels: t.Optional[Labels] = None,
     hist_labels: t.Optional[Labels] = None,
     exc_labels: t.Optional[Labels] = None,
-) -> t.Callable:
+) -> Decorator:
     """
     Decorator to monitor the execution of a function.
 
@@ -23,12 +25,18 @@ def meta_monitor(
         inc_handler: Counter to increment when the function is called.
         hist_handler: Histogram to observe the execution time of the function.
         exc_handler: Counter to increment when the function raises an exception.
+        counter_labels: Labels to add to the counter.
+        hist_labels: Labels to add to the histogram.
+        exc_labels: Labels to add to the exception counter.
 
     Usage:
         @meta_monitor(
             inc_handler=RequestCounter,
             hist_handler=RequestDurationHistogram,
             exc_handler=ExceptionCounter,
+            counter_labels=["foo", "bar"],
+            hist_labels=["foo2", "bar2"],
+            exc_labels=["foo3", "bar3"],
         )
         def my_function(*args, **kwargs) -> t.Any:
             pass
@@ -72,7 +80,7 @@ def meta_monitor(
             if counter_handler_target:
                 counter_handler_target.inc()
 
-            async def _wrapper():
+            async def _wrapper() -> t.Any:
                 try:
                     return await func(*args, **kwargs)
                 except Exception as err:
@@ -121,7 +129,7 @@ def meta_monitor(
             if counter_handler_target:
                 counter_handler_target.inc()
 
-            def _wrapper():
+            def _wrapper() -> t.Any:
                 try:
                     return func(*args, **kwargs)
                 except Exception as err:

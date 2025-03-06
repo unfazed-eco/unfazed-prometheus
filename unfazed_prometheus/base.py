@@ -3,7 +3,7 @@ import os
 from starlette.types import Scope
 from unfazed.conf import settings
 
-from .decorators import meta_monitor
+from .decorators import Decorator, meta_monitor
 from .metrics import (
     ApiCallCounter,
     ApiCallDurationHistogram,
@@ -22,16 +22,14 @@ from .utils import get_first_arg_first_letter, get_first_arg_name, get_function_
 
 
 class Agent:
-    settings: PrometheusSettings
-
-    def __init__(self):
+    def __init__(self) -> None:
         self._ready = False
 
     @property
     def settings(self) -> PrometheusSettings:
         return settings["UNFAZED_PROMETHEUS_SETTINGS"]
 
-    def setup(self):
+    def setup(self) -> None:
         # check prometheus multiproc dir settings
         if self.settings.prometheus_multiproc_dir:
             if (
@@ -44,12 +42,12 @@ class Agent:
 
         self._ready = True
 
-    def check_ready(self):
+    def check_ready(self) -> None:
         if not self._ready:
             self.setup()
 
     @property
-    def monitor_function(self):
+    def monitor_function(self) -> Decorator:
         self.check_ready()
 
         return meta_monitor(
@@ -69,7 +67,7 @@ class Agent:
             exc_labels=[self.settings.project, self.settings.hostname, "function"],
         )
 
-    def monitor_api(self, endpoint: str, category: str = "api"):
+    def monitor_api(self, endpoint: str, category: str = "api") -> Decorator:
         self.check_ready()
 
         return meta_monitor(
@@ -81,7 +79,7 @@ class Agent:
             exc_labels=[self.settings.project, self.settings.hostname, category],
         )
 
-    def monitor_request(self, scope: Scope):
+    def monitor_request(self, scope: Scope) -> Decorator:
         self.check_ready()
 
         return meta_monitor(
@@ -102,7 +100,7 @@ class Agent:
         )
 
     @property
-    def monitor_database(self):
+    def monitor_database(self) -> Decorator:
         self.check_ready()
 
         return meta_monitor(
@@ -123,7 +121,7 @@ class Agent:
         )
 
     @property
-    def monitor_cache(self):
+    def monitor_cache(self) -> Decorator:
         self.check_ready()
 
         return meta_monitor(
@@ -144,4 +142,4 @@ class Agent:
         )
 
 
-agent = Agent()
+agent: Agent = Agent()

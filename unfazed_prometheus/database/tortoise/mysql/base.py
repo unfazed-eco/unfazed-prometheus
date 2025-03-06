@@ -17,7 +17,5 @@ class PrometheusMySQLClient(MySQLClient):
         return await super().execute_query(query, values)
 
     @agent.monitor_database
-    async def execute_query_dict(
-        self, query: str, values: t.Optional[list] = None
-    ) -> list[dict]:
-        return await super().execute_query_dict(query, values)
+    async def execute_many(self, query: str, values: list) -> None:
+        return await super().execute_many(query, values)

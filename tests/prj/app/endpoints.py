@@ -15,6 +15,15 @@ async def create_user(request: HttpRequest) -> HttpResponse:
     return HttpResponse(f"created user {user.id}")
 
 
+async def bulk_create_users(request: HttpRequest) -> HttpResponse:
+    users = [
+        User(name=f"test-{i}", email=f"test-{i}@test.com", password=f"test-{i}")
+        for i in range(10)
+    ]
+    await User.bulk_create(users)
+    return HttpResponse(f"created {len(users)} users")
+
+
 async def cache_get(request: HttpRequest) -> HttpResponse:
     cache = caches["default"]
 
