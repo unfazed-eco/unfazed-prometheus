@@ -41,6 +41,7 @@ jobs:
           uv sync
       - name: "Run Test"
         run: |
+          make setup-env
           make format
           make test
         env:
