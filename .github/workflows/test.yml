@@ -42,6 +42,7 @@ jobs:
           uv sync
       - name: "Run Test"
         run: |
+          mkdir prometheus
           make setup-env
           make format
           make test
@@ -50,4 +51,4 @@ jobs:
           MYSQL_PORT: "3306"
           MYSQL_PASSWORD: app
           REDIS_URL: "redis://localhost:6379"
-          PROMETHEUS_MULTIPROC_DIR: "/home/runner/work/scripts"
+          PROMETHEUS_MULTIPROC_DIR: "./prometheus"
