@@ -37,6 +37,7 @@ jobs:
           allow-prereleases: true
       - name: "Install dependencies"
         run: |
+          mkdir /prometheus
           pip install uv
           uv sync
       - name: "Run Test"
