@@ -41,9 +41,8 @@ jobs:
           uv sync
       - name: "Make prometheus dir"
         run: |
-          sudo mkdir /prometheus
-          sudo chown -R 777 /prometheus
-          echo "hello" > /prometheus/test.txt
+          mkdir prometheus
+          echo "hello" > ./prometheus/test.txt
       - name: "Run format"
         run: make format
       - name: "Run Test"
@@ -55,3 +54,4 @@ jobs:
           MYSQL_PORT: "3306"
           MYSQL_PASSWORD: app
           REDIS_URL: "redis://localhost:6379"
+          PROMETHEUS_MULTIPROC_DIR: "./prometheus"
