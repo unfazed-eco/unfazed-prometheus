@@ -15,7 +15,7 @@ def prometheus_dir() -> str:
     unfazed_prometheus_settings: PrometheusSettings = settings[
         "UNFAZED_PROMETHEUS_SETTINGS"
     ]
-    return unfazed_prometheus_settings.prometheus_multiproc_dir
+    return unfazed_prometheus_settings.prometheus_multiproc_dir or ""
 
 
 @pytest.fixture(scope="session")
