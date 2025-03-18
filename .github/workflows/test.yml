@@ -37,12 +37,11 @@ jobs:
           allow-prereleases: true
       - name: "Install dependencies"
         run: |
-          
           pip install uv
           uv sync
       - name: "Run Test"
         run: |
-          mkdir prometheus
+          sudo mkdir /prometheus
           make setup-env
           make format
           make test
@@ -51,4 +50,3 @@ jobs:
           MYSQL_PORT: "3306"
           MYSQL_PASSWORD: app
           REDIS_URL: "redis://localhost:6379"
-          PROMETHEUS_MULTIPROC_DIR: "./prometheus"
