@@ -39,11 +39,15 @@ jobs:
         run: |
           pip install uv
           uv sync
-      - name: "Run Test"
+      - name: "Make prometheus dir"
         run: |
           sudo mkdir /prometheus
+          sudo chown -R /prometheus
+      - name: "Run format"
+        run: make format
+      - name: "Run Test"
+        run: |
           make setup-env
-          make format
           make test
         env:
           MYSQL_HOST: "127.0.0.1"
