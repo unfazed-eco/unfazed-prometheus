@@ -6,9 +6,9 @@ test:
 
 format:
 	@echo "Formatting code..."
-	ruff format tests/ unfazed_prometheus/
-	ruff check tests/ unfazed_prometheus/  --fix
-	mypy --check-untyped-defs --explicit-package-bases --ignore-missing-imports tests/ unfazed_prometheus/
+	uv run ruff format tests/ unfazed_prometheus/
+	uv run ruff check tests/ unfazed_prometheus/  --fix
+	uv run mypy --check-untyped-defs --explicit-package-bases --ignore-missing-imports tests/ unfazed_prometheus/
 
 publish:
 	@echo "Publishing package..."

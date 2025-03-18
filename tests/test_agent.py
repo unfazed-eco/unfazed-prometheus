@@ -2,41 +2,52 @@ import os
 import typing as t
 
 import pytest
+from unfazed.conf import settings
 from unfazed.core import Unfazed
 from unfazed.test import Requestfactory
 
 from unfazed_prometheus import agent
+from unfazed_prometheus.settings import PrometheusSettings
 
 
 @pytest.fixture(scope="session")
-def setup_db_state() -> t.Generator[None, None, None]:
+def prometheus_dir() -> str:
+    unfazed_prometheus_settings: PrometheusSettings = settings[
+        "UNFAZED_PROMETHEUS_SETTINGS"
+    ]
+    return unfazed_prometheus_settings.prometheus_multiproc_dir or ""
+
+
+@pytest.fixture(scope="session")
+def setup_db_state(prometheus_dir: str) -> t.Generator[None, None, None]:
     # delete all file suffix with .db in /prometheus
-    for file in os.listdir("/prometheus"):
+    for file in os.listdir(prometheus_dir):
         if file.endswith(".db"):
-            os.remove(os.path.join("/prometheus", file))
+            os.remove(os.path.join(prometheus_dir, file))
 
     yield
 
     # delete all db file in /prometheus
-    for file in os.listdir("/prometheus"):
+    for file in os.listdir(prometheus_dir):
         if file.endswith(".db"):
-            os.remove(os.path.join("/prometheus", file))
+            os.remove(os.path.join(prometheus_dir, file))
 
 
-async def assert_db_files_exist() -> None:
-    assert len(os.listdir("/prometheus")) > 0
+async def assert_db_files_exist(prometheus_dir: str) -> None:
+    assert len(os.listdir(prometheus_dir)) > 0
     flag = False
-    for file in os.listdir("/prometheus"):
+    for file in os.listdir(prometheus_dir):
         if file.endswith(".db"):
             flag = True
             # check file size is not 0
-            assert os.path.getsize(os.path.join("/prometheus", file)) > 0
+            assert os.path.getsize(os.path.join(prometheus_dir, file)) > 0
 
     assert flag, "no db files found"
 
 
 async def test_requests(
     unfazed: Unfazed,
+    prometheus_dir: str,
     setup_db_state: t.Generator[None, None, None],
 ) -> None:
     async with Requestfactory(unfazed) as rf:
@@ -47,10 +58,11 @@ async def test_requests(
             resp = await rf.get("/api/hello2")
             assert resp.status_code == 200
 
-    await assert_db_files_exist()
+    await assert_db_files_exist(prometheus_dir)
 
 
 async def test_api_call(
+    prometheus_dir: str,
     setup_db_state: t.Generator[None, None, None],
 ) -> None:
     @agent.monitor_api("/api/call/hello1")
@@ -68,10 +80,11 @@ async def test_api_call(
         resp = await hello2()
         assert resp == "hello2"
 
-    await assert_db_files_exist()
+    await assert_db_files_exist(prometheus_dir)
 
 
 async def test_function_call(
+    prometheus_dir: str,
     setup_db_state: t.Generator[None, None, None],
 ) -> None:
     @agent.monitor_function
@@ -108,11 +121,12 @@ async def test_function_call(
         func3()
         func4()
 
-    await assert_db_files_exist()
+    await assert_db_files_exist(prometheus_dir)
 
 
 async def test_db(
     unfazed: Unfazed,
+    prometheus_dir: str,
     setup_db_state: t.Generator[None, None, None],
 ) -> None:
     async with Requestfactory(unfazed) as rf:
@@ -126,11 +140,12 @@ async def test_db(
             resp = await rf.get("/api/app/user-bulk-create")
             assert resp.status_code == 200
 
-    await assert_db_files_exist()
+    await assert_db_files_exist(prometheus_dir)
 
 
 async def test_cache(
     unfazed: Unfazed,
+    prometheus_dir: str,
     setup_db_state: t.Generator[None, None, None],
 ) -> None:
     async with Requestfactory(unfazed) as rf:
@@ -141,4 +156,4 @@ async def test_cache(
             resp = await rf.get("/api/app/cache-set")
             assert resp.status_code == 200
 
-    await assert_db_files_exist()
+    await assert_db_files_exist(prometheus_dir)

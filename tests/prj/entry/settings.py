@@ -1,3 +1,4 @@
+import os
 import socket
 
 UNFAZED_SETTINGS = {
@@ -11,7 +12,7 @@ UNFAZED_SETTINGS = {
             "default": {
                 "ENGINE": "unfazed_prometheus.database.tortoise.mysql",
                 "CREDENTIALS": {
-                    "HOST": "mysql",
+                    "HOST": os.getenv("MYSQL_HOST", "mysql"),
                     "PORT": 3306,
                     "USER": "app",
                     "PASSWORD": "app",
@@ -23,7 +24,7 @@ UNFAZED_SETTINGS = {
     "CACHE": {
         "default": {
             "BACKEND": "unfazed_prometheus.cache.backends.default.PrometheusDefaultBackend",
-            "LOCATION": "redis://redis:6379",
+            "LOCATION": os.getenv("REDIS_URL", "redis://redis:6379"),
             "OPTIONS": {
                 "decode_responses": True,
                 "max_connections": 1000,
@@ -38,5 +39,5 @@ UNFAZED_PROMETHEUS_SETTINGS = {
     "HOSTNAME": socket.gethostname(),
     "PROJECT": "unfazed_prometheus",
     "CLIENT_CLASS": "unfazed_prometheus.settings.PrometheusSettings",
-    "PROMETHEUS_MULTIPROC_DIR": "/prometheus",
+    "PROMETHEUS_MULTIPROC_DIR": os.getenv("PROMETHEUS_MULTIPROC_DIR", "/prometheus"),
 }
