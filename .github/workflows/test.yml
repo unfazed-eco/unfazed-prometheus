@@ -42,7 +42,7 @@ jobs:
       - name: "Make prometheus dir"
         run: |
           sudo mkdir /prometheus
-          sudo chown -R /prometheus
+          sudo chown -R u+rwx /prometheus
       - name: "Run format"
         run: make format
       - name: "Run Test"
