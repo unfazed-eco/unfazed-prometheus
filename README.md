@@ -26,7 +26,6 @@ import socket
 UNFAZED_PROMETHEUS_SETTINGS = {
     "HOSTNAME": socket.gethostname(),
     "PROJECT": "{{ project_name }}",
-    "CLIENT_CLASS": "unfazed_prometheus.settings.PrometheusSettings",
     "PROMETHEUS_MULTIPROC_DIR": "/prometheus",
 }
 

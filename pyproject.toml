@@ -5,7 +5,7 @@ description = "Prometheus metrics for Unfazed"
 readme = "README.md"
 dependencies = [
     "prometheus-client>=0.21.1",
-    "unfazed>=0.0.6",
+    "unfazed>=0.0.7",
 ]
 
 
