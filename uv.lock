@@ -605,7 +605,7 @@ wheels = [
 
 [[package]]
 name = "unfazed"
-version = "0.0.6"
+version = "0.0.7"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "aerich" },
@@ -623,9 +623,9 @@ dependencies = [
     { name = "tortoise-orm" },
     { name = "uvicorn" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/b8/d8/69168ce0e6e080776d6a00283a6e295b425b5a2ccceb3f526405d8560190/unfazed-0.0.6.tar.gz", hash = "sha256:98639523c33f56c71b785e9ed231b415cc056b1a6de70f63633e6febdb58d891", size = 69634 }
+sdist = { url = "https://files.pythonhosted.org/packages/a1/6b/37e36dcf6fadd62eae638556e895dea197ec8a45d72392a7f54775c08eb8/unfazed-0.0.7.tar.gz", hash = "sha256:bc1e4f06e5c810553b79a8ce6ffaf186bb22338fdc16151e682afa75ee51a610", size = 80191 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/4d/29/e93b3c441e5475605b8df80a2bd71b615b531fa2b7318494749c24c5671c/unfazed-0.0.6-py3-none-any.whl", hash = "sha256:ed82b1516d3c9d7d2de2e0e8d2e0f27c4f0173ccdd0e1fd3b7c6ceb4698a64b3", size = 128989 },
+    { url = "https://files.pythonhosted.org/packages/4e/0d/e1f12a9734c8963cfc8b337d8d9a4a60aac2b4dd703a8126899d7f8f0c1c/unfazed-0.0.7-py3-none-any.whl", hash = "sha256:782aa541bccb33f7f89fef22c07d038e35d11d520a5559e1147b8e508dc74466", size = 141935 },
 ]
 
 [[package]]
@@ -652,7 +652,7 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "prometheus-client", specifier = ">=0.21.1" },
-    { name = "unfazed", specifier = ">=0.0.6" },
+    { name = "unfazed", specifier = ">=0.0.7" },
 ]
 
 [package.metadata.requires-dev]

@@ -1,6 +1,8 @@
 from pydantic import BaseModel, Field
+from unfazed.conf import register_settings
 
 
+@register_settings("UNFAZED_PROMETHEUS_SETTINGS")
 class PrometheusSettings(BaseModel):
     """
     settings key: UNFAZED_PROMETHEUS_SETTINGS
