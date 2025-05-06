@@ -1,6 +1,6 @@
 [project]
 name = "unfazed-prometheus"
-version = "0.0.2"
+version = "0.0.3"
 description = "Prometheus metrics for Unfazed"
 readme = "README.md"
 dependencies = [
