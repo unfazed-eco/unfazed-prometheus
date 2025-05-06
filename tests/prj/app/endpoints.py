@@ -24,15 +24,44 @@ async def bulk_create_users(request: HttpRequest) -> HttpResponse:
     return HttpResponse(f"created {len(users)} users")
 
 
-async def cache_get(request: HttpRequest) -> HttpResponse:
+async def default_cache_get(request: HttpRequest) -> HttpResponse:
     cache = caches["default"]
 
     value = await cache.get("test")
     return HttpResponse(f"get {value}")
 
 
-async def cache_set(request: HttpRequest) -> HttpResponse:
+async def default_cache_set(request: HttpRequest) -> HttpResponse:
     cache = caches["default"]
 
     await cache.set("test", "test")
-    return HttpResponse("successfully")
+    return HttpResponse("successfully set default cache")
+
+
+async def namespace_cache_get(request: HttpRequest) -> HttpResponse:
+    cache = caches["namespace"]
+
+    value = await cache.get("test")
+
+    return HttpResponse(f"get {value}")
+
+
+async def namespace_cache_set(request: HttpRequest) -> HttpResponse:
+    cache = caches["namespace"]
+
+    await cache.set("test", "test value for namespace cache")
+    return HttpResponse("successfully set namespace cache")
+
+
+async def serializer_cache_get(request: HttpRequest) -> HttpResponse:
+    cache = caches["serializer"]
+
+    value = await cache.get("test")
+    return HttpResponse(f"get {value}")
+
+
+async def serializer_cache_set(request: HttpRequest) -> HttpResponse:
+    cache = caches["serializer"]
+
+    await cache.set("test", {"a": 1, "b": 2})
+    return HttpResponse("successfully set serializer cache")

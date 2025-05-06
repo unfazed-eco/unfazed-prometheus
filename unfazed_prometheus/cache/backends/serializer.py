@@ -1,11 +1,14 @@
+import logging
 import typing as t
 
-from unfazed.cache.backends.redis import DefaultBackend
+from unfazed.cache.backends.redis import SerializerBackend
 
 from unfazed_prometheus import agent
 
+logger = logging.getLogger("unfazed")
 
-class PrometheusDefaultBackend(DefaultBackend):
+
+class PrometheusSerializerBackend(SerializerBackend):
     def __init__(
         self, location: str, options: t.Dict[str, t.Any] | None = None
     ) -> None:

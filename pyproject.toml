@@ -8,6 +8,11 @@ dependencies = [
     "unfazed>=0.0.7",
 ]
 
+[project.optional-dependencies]
+all = [
+    "unfazed-redis>=0.0.1",
+]
+
 
 [build-system]
 requires = ["hatchling"]
