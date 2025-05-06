@@ -29,7 +29,24 @@ UNFAZED_SETTINGS = {
                 "decode_responses": True,
                 "max_connections": 1000,
             },
-        }
+        },
+        "namespace": {
+            "BACKEND": "unfazed_prometheus.cache.backends.namespace.PrometheusNamespaceBackend",
+            "LOCATION": os.getenv("REDIS_URL", "redis://redis:6379"),
+            "OPTIONS": {
+                "PREFIX": "namespace",
+                "VERSION": "1",
+                "max_connections": 1000,
+            },
+        },
+        "serializer": {
+            "BACKEND": "unfazed_prometheus.cache.backends.serializer.PrometheusSerializerBackend",
+            "LOCATION": os.getenv("REDIS_URL", "redis://redis:6379"),
+            "OPTIONS": {
+                "PREFIX": "serializer",
+                "max_connections": 1000,
+            },
+        },
     },
     "INSTALLED_APPS": ["app"],
 }

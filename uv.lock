@@ -630,11 +630,16 @@ wheels = [
 
 [[package]]
 name = "unfazed-prometheus"
-version = "0.0.1"
+version = "0.0.2"
 source = { editable = "." }
 dependencies = [
     { name = "prometheus-client" },
     { name = "unfazed" },
+]
+
+[package.optional-dependencies]
+all = [
+    { name = "unfazed-redis" },
 ]
 
 [package.dev-dependencies]
@@ -653,7 +658,9 @@ dev = [
 requires-dist = [
     { name = "prometheus-client", specifier = ">=0.21.1" },
     { name = "unfazed", specifier = ">=0.0.7" },
+    { name = "unfazed-redis", marker = "extra == 'all'", specifier = ">=0.0.1" },
 ]
+provides-extras = ["all"]
 
 [package.metadata.requires-dev]
 dev = [
@@ -665,6 +672,19 @@ dev = [
     { name = "pytest-cov", specifier = ">=6.0.0" },
     { name = "ruff", specifier = ">=0.8.4" },
     { name = "types-pymysql", specifier = ">=1.1.0.20241103" },
+]
+
+[[package]]
+name = "unfazed-redis"
+version = "0.0.1"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "pydantic" },
+    { name = "redis" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/28/31/3e2b6ea153693c9f194e17386aeb848177225cea3385b1f0c3ac2cace3b4/unfazed_redis-0.0.1.tar.gz", hash = "sha256:e997f780ecab0522fd55ac393b6c3040648c3fa4b94cc361f4a870c245fb8978", size = 48166 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/b5/e4/c7db65112f9ac8b923b6ae8aad9454d01c03892a918abe2356f8ab0074f9/unfazed_redis-0.0.1-py3-none-any.whl", hash = "sha256:ad8bf7233e5f2a8005174df819e1062336bf26fe888bf39adf519a832dbea265", size = 6619 },
 ]
 
 [[package]]

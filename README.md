@@ -90,6 +90,11 @@ UNFAZED_SETTINGS = {
 
 all you need to do is to use the `unfazed_prometheus.cache.backends.default.PrometheusDefaultBackend` cache backend.
 
+other cache backend:
+
+- `unfazed_prometheus.cache.backends.namespace.PrometheusNamespaceBackend`
+- `unfazed_prometheus.cache.backends.serializer.PrometheusSerializerBackend`
+
 
 ```python
 

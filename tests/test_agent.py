@@ -143,17 +143,51 @@ async def test_db(
     await assert_db_files_exist(prometheus_dir)
 
 
-async def test_cache(
+async def test_default_cache(
     unfazed: Unfazed,
     prometheus_dir: str,
     setup_db_state: t.Generator[None, None, None],
 ) -> None:
     async with Requestfactory(unfazed) as rf:
         for _ in range(100):
-            resp = await rf.get("/api/app/cache-get")
+            resp = await rf.get("/api/app/default-cache-get")
             assert resp.status_code == 200
 
-            resp = await rf.get("/api/app/cache-set")
+            resp = await rf.get("/api/app/default-cache-set")
             assert resp.status_code == 200
+
+    await assert_db_files_exist(prometheus_dir)
+
+
+async def test_namespace_cache(
+    unfazed: Unfazed,
+    prometheus_dir: str,
+    setup_db_state: t.Generator[None, None, None],
+) -> None:
+    async with Requestfactory(unfazed) as rf:
+        for _ in range(100):
+            resp = await rf.get("/api/app/namespace-cache-get")
+            assert resp.status_code == 200
+
+            resp = await rf.get("/api/app/namespace-cache-set")
+            assert resp.status_code == 200
+            assert resp.content == b"successfully set namespace cache"
+
+    await assert_db_files_exist(prometheus_dir)
+
+
+async def test_serializer_cache(
+    unfazed: Unfazed,
+    prometheus_dir: str,
+    setup_db_state: t.Generator[None, None, None],
+) -> None:
+    async with Requestfactory(unfazed) as rf:
+        for _ in range(100):
+            resp = await rf.get("/api/app/serializer-cache-get")
+            assert resp.status_code == 200
+
+            resp = await rf.get("/api/app/serializer-cache-set")
+            assert resp.status_code == 200
+            assert resp.content == b"successfully set serializer cache"
 
     await assert_db_files_exist(prometheus_dir)
